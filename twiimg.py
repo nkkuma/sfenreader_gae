@@ -16,77 +16,83 @@
 # limitations under the License.
 #
 
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import util
-from google.appengine.api.images import Image
-from google.appengine.api import images
-
-import urllib
+import urllib.parse
 import logging
 import re
 from time import time
 
 from sfenlib import u2utf8
 
-class TwiimgHandler(webapp.RequestHandler):
+class TwiimgHandler():
     DEFAULT_TITLE = u'局面図'
     EDITING_STRING_EN = u'Edit another dialog from this dialog'
     EDITING_STRING_JA = u'この局面を引き継いで別の局面を作る'
+
+    def __init__(self, url_root, args, query_string):
+        self.url_root = url_root
+        self.args = args
+        self.query_string = query_string.decode('utf-8')
+
     def get(self):
-        url  = self.request.url
-        m = re.search('(.+)\/(.+)', url)
-        path = m.group(1)
+        print(self.url_root)
+        print(self.args)
+        print(self.query_string)
+        print(type(self.args))
+
+        path = self.url_root
         
-        sfen_raw = self.request.get('sfen')
-        sfen = urllib.unquote(sfen_raw)
-        sfenurl = "{}/sfen?{}".format(path, self.request.query_string)
-        resizeurl = "{}/resize?{}".format(path, self.request.query_string)
+        sfen_raw = self.args.get('sfen')
+        sfen = urllib.parse.unquote(sfen_raw)
+        sfenurl = "{}sfen?{}".format(path, self.query_string)
+        resizeurl = "{}resize?{}".format(path, self.query_string)
 
         sfen = sfen.replace('\r','')
         sfen = sfen.replace('\n','')
 
-        black_name_raw = urllib.unquote(self.request.get('sname'))
-        white_name_raw = urllib.unquote(self.request.get('gname'))
-        title_raw = self.request.get('title')
+        black_name_raw = urllib.parse.unquote(self.args.get('sname', ''))
+        white_name_raw = urllib.parse.unquote(self.args.get('gname', ''))
+        title_raw = self.args.get('title', '')
         black_name = u2utf8(black_name_raw)
         white_name = u2utf8(white_name_raw)
         if title_raw != "":
-            title = u2utf8(urllib.unquote(title_raw))
+            title = u2utf8(urllib.parse.unquote(title_raw))
         else:
-            title = u2utf8(self.DEFAULT_TITLE)
+            title = self.DEFAULT_TITLE
 
         height = 421
         # If board has no name, the image height is smaller.
-        if black_name == '' and white_name == '' and self.request.get('title') == '':
+        if black_name == '' and white_name == '' and self.args.get('title') == '':
             height = 400
 
-        self.response.out.write('<!DOCTYPE html>')
-        self.response.out.write('<html>\n<head>\n')
-        self.response.out.write('<meta name="twitter:id" content="{}" />\n'.format(str(time())[:-3]))
-        self.response.out.write('<meta name="twitter:card" content="summary_large_image" />\n')
-        self.response.out.write('<meta name="twitter:site" content="@sfenreader_gae" />\n')
-        self.response.out.write('<meta name="twitter:description" content="@sfenreader_gae" />\n')
-        self.response.out.write('<meta name="twitter:title" content="{}" />\n'.format(title))
+        response = ""
+        response += '<!DOCTYPE html>'
+        response += '<html>\n<head>\n'
+        response += '<meta name="twitter:id" content="{}" />\n'.format(str(time())[:-3])
+        response += '<meta name="twitter:card" content="summary_large_image" />\n'
+        response += '<meta name="twitter:site" content="@sfenreader_gae" />\n'
+        response += '<meta name="twitter:description" content="@sfenreader_gae" />\n'
+        response += '<meta name="twitter:title" content="{}" />\n'.format(title)
         if black_name != '' and white_name != '':
-            self.response.out.write('<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name))
+            response += '<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name)
         else:
-            self.response.out.write('<meta name="twitter:description" content="{}" />\n'.format(title))
+            response += '<meta name="twitter:description" content="{}" />\n'.format(title)
         
-        # self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
-        self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(resizeurl))
-        # self.response.out.write('<meta name="twitter:image:width" content="400" />\n')
-        self.response.out.write('<meta name="twitter:image:width" content="842" />\n')
-        self.response.out.write('<meta name="twitter:image:height" content="421" />\n')
-        # self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
-        self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(resizeurl))
-        self.response.out.write('<meta charset="UTF-8" />\n')
-        self.response.out.write('</head>\n<body>\n')
-        self.response.out.write('<p>\n<div style="text-align:center;">{}</div><br>\n'.format(title))
-        self.response.out.write('<img src="{}" /><br>\n'.format(sfenurl))
+        # response += ('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
+        response += '<meta name="twitter:image" content="{}" />\n'.format(resizeurl)
+        # response += ('<meta name="twitter:image:width" content="400" />\n')
+        response += '<meta name="twitter:image:width" content="842" />\n'
+        response += '<meta name="twitter:image:height" content="421" />\n'
+        # response += ('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
+        response += '<meta name="twitter:url" content="{}" />\n'.format(resizeurl)
+        response += '<meta charset="UTF-8" />\n'
+        response += '</head>\n<body>\n'
+        response += '<p>\n<div style="text-align:center;">{}</div><br>\n'.format(title)
+        response += '<img src="{}" /><br>\n'.format(sfenurl)
         query = self.create_sfen_query(sfen_raw, black_name_raw, white_name_raw, title_raw)
-        self.response.out.write(u'<span style="text-align:left;"><a href="./ja/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_JA))
-        self.response.out.write(u'<span style="text-align:left;"><a href="./en/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_EN))
-        self.response.out.write('</body>\n</html>\n')
+        response += u'<span style="text-align:left;"><a href="./ja/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_JA)
+        response += u'<span style="text-align:left;"><a href="./en/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_EN)
+        response += '</body>\n</html>\n'
+        return (200, response)
 
     def create_sfen_query(self, sfen, black_name, white_name, title):
         query = ""
@@ -102,12 +108,3 @@ class TwiimgHandler(webapp.RequestHandler):
             query = "?" + query[:-1]
         return query
 
-def main():
-    application = webapp.WSGIApplication([('/twiimg', TwiimgHandler)],
-                                         debug=True)
-
-    util.run_wsgi_app(application)
-
-
-if __name__ == '__main__':
-    main()

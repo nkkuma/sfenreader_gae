@@ -19,3 +19,4 @@
 ENCODE = 'UTF-8'
 def u2utf8(s):
     return s.encode(ENCODE)
+    
