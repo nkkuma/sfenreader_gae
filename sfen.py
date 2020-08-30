@@ -255,7 +255,7 @@ class SfenHandler():
     def board_img_init(self):
         if self.board_img == '':
             logging.info('Loading Board Image...')
-            self.board_img = Image.open("img/board.png")
+            self.board_img = Image.open("img/board.png").convert("RGBA")
 
     def board_alphabet_img_init(self):
         if self.board_alphabet_img == '':
@@ -284,7 +284,7 @@ class SfenHandler():
     def last_move_img_init(self):
         if self.last_move_img == '':
             logging.info('Loading lm.png ...')
-            self.last_move_img = Image.open("img/lm.png")
+            self.last_move_img = Image.open("img/lm.png").convert("RGBA")
 
     def get_string_img(self, string, font_size = 16):
         '''
@@ -517,10 +517,10 @@ class SfenHandler():
         if len(img_list) == 1:
             return (img_list[0][0], img_list)
             
-        img = Image.new("RGBA", (self.IMAGE_WIDTH,self.IMAGE_HEIGHT + self.max_title_height), (255,255,255,255))
+        img = Image.new("RGBA", (self.IMAGE_WIDTH,self.IMAGE_HEIGHT + self.max_title_height), (255, 255, 255, 255))
         for img_info in img_list:
-            img_info[0].putalpha(int(img_info[3]*255))
-            img.paste(img_info[0], (img_info[1],img_info[2]))
+            # TODO: alpha値処理
+            img.paste(img_info[0], (img_info[1],img_info[2]), img_info[0])
 
         img_list = [(img, 0, 0, 1.0)]
         logging.debug("composite success:")
