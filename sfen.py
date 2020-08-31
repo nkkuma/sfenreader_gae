@@ -63,39 +63,40 @@ class SfenHandler():
 
     TITLE_Y = 5
 
-    IMAGE_WIDTH  = 400
-    IMAGE_HEIGHT = 400
+    IMAGE_WIDTH  = 800
+    IMAGE_HEIGHT = 800
 
-    PIECE_IMAGE_WIDTH   = 24
-    PIECE_IMAGE_HEIGHT  = 24
-    NUMBER_IMAGE_WIDTH  = 12
-    NUMBER_IMAGE_HEIGHT = 12
+    # PIECE_IMAGEはkanjiの場合58
+    PIECE_IMAGE_WIDTH   = 48
+    PIECE_IMAGE_HEIGHT  = 48
+    NUMBER_IMAGE_WIDTH  = 24
+    NUMBER_IMAGE_HEIGHT = 24
 
-    BLACK_MARK_X = 360
-    BLACK_MARK_Y = 5
-
-    WHITE_MARK_X = 10
-    WHITE_MARK_Y = 310
-    WHITE_TITLE_MARK_X = 5
-
-    BLACK_MARK_WIDTH  = 24
-    BLACK_MARK_HEIGHT = 24
+    BLACK_MARK_WIDTH  = 48
+    BLACK_MARK_HEIGHT = 48
     BLACK_MARK_SMALL_WIDTH = 16
     BLACK_MARK_SMALL_HEIGHT = 16
-    WHITE_MARK_WIDTH  = 24
-    WHITE_MARK_HEIGHT = 24
+    WHITE_MARK_WIDTH  = 48
+    WHITE_MARK_HEIGHT = 48
     WHITE_MARK_SMALL_WIDTH = 16
     WHITE_MARK_SMALL_HEIGHT = 16
 
-    BOARD_X = 50
-    BOARD_Y = 15
-    BOARD_WIDTH  = 306
-    BOARD_HEIGHT = 304
+    BOARD_X = 100
+    BOARD_Y = 30
+    BOARD_WIDTH  = 612
+    BOARD_HEIGHT = 608
 
-    SQUARE_ORIGIN_X = 6
-    SQUARE_ORIGIN_Y = 16
-    SQUARE_MULTIPLE_X = 31
-    SQUARE_MULTIPLE_Y = 32
+    BLACK_MARK_X = BOARD_X + BOARD_WIDTH + 6
+    BLACK_MARK_Y = 5
+
+    WHITE_MARK_X = 10
+    WHITE_MARK_Y = BOARD_Y + BOARD_HEIGHT - 9
+    WHITE_TITLE_MARK_X = 5
+
+    SQUARE_ORIGIN_X = 13
+    SQUARE_ORIGIN_Y = 33
+    SQUARE_MULTIPLE_X = PIECE_IMAGE_WIDTH + 16 - 2
+    SQUARE_MULTIPLE_Y = PIECE_IMAGE_HEIGHT + 16
 
     ### 持ち駒の数を右揃えにするパディング値
     NUMBER_IMAGE_PADDING_X = 12
@@ -118,6 +119,12 @@ class SfenHandler():
 
     def img_init(self, piece_kind = 'kanji'):
         if piece_kind == 'kanji':
+            self.SQUARE_ORIGIN_X = 8
+            self.SQUARE_ORIGIN_Y = 28
+            self.PIECE_IMAGE_WIDTH   = 58
+            self.PIECE_IMAGE_HEIGHT  = 58
+            self.SQUARE_MULTIPLE_X = self.PIECE_IMAGE_WIDTH + 6 - 2
+            self.SQUARE_MULTIPLE_Y = self.PIECE_IMAGE_HEIGHT + 6
             self.piece_img_init()
             self.draw_piece_img = self.piece_img
             self.board_img_init()

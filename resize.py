@@ -25,8 +25,8 @@ import logging
 from util import *
 
 class ResizeHandler():
-    WIDTH = 842
-    HEIGHT = 421
+    WIDTH = 1520
+    HEIGHT = 800
 
     def __init__(self, url_root, args, query_string):
         self.url_root = url_root
@@ -34,15 +34,15 @@ class ResizeHandler():
         self.query_string = query_string.decode('utf-8')
 
     def get(self):
-        ### height:421px width:400px
-        ### width will be about 800px
+        ### height:800px width:800px
+        ### width will be about 1520px
         # self.response.headers['Content-Type'] = 'image/png'
         ### put out resized png image which matches Twitter card.
         ### Basic concept
-        ### 1: Prepare white back png which width is 800px, height is 421px.
+        ### 1: Prepare white back png which width is 1520px, height is 800px.
         ### 2: put diagram image center of the images
 
-        ### Make white background image (800x421 px)
+        ### Make white background image (1520x800 px)
         image = Image.open('img/whitebase.png').resize((self.WIDTH, self.HEIGHT))
 
         url = self.url_root + 'sfen?' + self.query_string

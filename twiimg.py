@@ -61,7 +61,7 @@ class TwiimgHandler():
 
         height = 421
         # If board has no name, the image height is smaller.
-        if black_name == '' and white_name == '' and self.args.get('title') == '':
+        if black_name_raw == '' and white_name_raw == '' and self.args.get('title') == '':
             height = 400
 
         response = ""
@@ -69,28 +69,30 @@ class TwiimgHandler():
         response += '<html>\n<head>\n'
         response += '<meta name="twitter:id" content="{}" />\n'.format(str(time())[:-3])
         response += '<meta name="twitter:card" content="summary_large_image" />\n'
-        response += '<meta name="twitter:site" content="@sfenreader_gae" />\n'
-        response += '<meta name="twitter:description" content="@sfenreader_gae" />\n'
+        response += '<meta name="twitter:site" content="@nkkuma_service" />\n'
+        response += '<meta name="twitter:description" content="@nkkuma_service" />\n'
         response += '<meta name="twitter:title" content="{}" />\n'.format(title)
-        if black_name != '' and white_name != '':
+        if black_name_raw != '' and white_name_raw != '':
             response += '<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name)
         else:
             response += '<meta name="twitter:description" content="{}" />\n'.format(title)
         
-        # response += ('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
+        # response += '<meta name="twitter:image" content="{}" />\n'.format(sfenurl)
         response += '<meta name="twitter:image" content="{}" />\n'.format(resizeurl)
         # response += ('<meta name="twitter:image:width" content="400" />\n')
         response += '<meta name="twitter:image:width" content="842" />\n'
         response += '<meta name="twitter:image:height" content="421" />\n'
-        # response += ('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
+        # response += '<meta name="twitter:url" content="{}" />\n'.format(sfenurl)
         response += '<meta name="twitter:url" content="{}" />\n'.format(resizeurl)
         response += '<meta charset="UTF-8" />\n'
         response += '</head>\n<body>\n'
-        response += '<p>\n<div style="text-align:center;">{}</div><br>\n'.format(title)
-        response += '<img src="{}" /><br>\n'.format(sfenurl)
-        query = self.create_sfen_query(sfen_raw, black_name_raw, white_name_raw, title_raw)
-        response += u'<span style="text-align:left;"><a href="./ja/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_JA)
-        response += u'<span style="text-align:left;"><a href="./en/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_EN)
+        response += '<p>\n<br><br><div style="text-align:center;"><font size="6">{}</font></div>\n'.format(title)
+        response += '<div style="text-align:center;"><img src="{}" max-width="90%" /></div><br>\n'.format(sfenurl)
+        # query = self.create_sfen_query(sfen_raw, black_name_raw, white_name_raw, title_raw)
+        # response += u'<span style="text-align:left;"><a href="./ja/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_JA)
+        # response += u'<span style="text-align:left;"><a href="./en/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_EN)
+        response += '<br><br><div style="text-align:center;">developed by nkkuma</div>\n'
+        response += '<br><br><div style="text-align:center;">This software includes the work that is distributed in <a href="https://github.com/shibacho/sfenreader_gae">@sfenreader_gae</a>.</div>\n'
         response += '</body>\n</html>\n'
         return (200, response)
 
